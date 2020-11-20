@@ -28,13 +28,6 @@ const Statistic = ({value, text}) =>
 
 
 const Statistics = (props) =>{
-  //This doesn't work because there is no way to include the text in the Statistic component
-  // const {title, values, texts} = props;
-  // return (
-  //   <>
-  //   {values.map(value => (<>
-  //   <Statistic value = {value}/>
-  //   </>)
     
 //to display if no data yet - i.e. average still refers to NaN
   if (isNaN(props.average)){
