@@ -7,8 +7,8 @@ For the submission of exercises relating to the Fullstack 2020 course created by
   Flow diagrams demonstrating HTTP 
 # Part1
   courseinfo
-    Demonstrates basic use of props
-   unicafe
-    First intro to state, recording different types of feedback
-   anecdotes
-    Displays a random anecdote, refreshed by hitting a button. Collects votes for each anecdote and displays the most popular
+  Demonstrates basic use of props
+  unicafe
+  First intro to state, recording different types of feedback
+  annecdotes
+  Displays a random anecdote, refreshed by hitting a button. Collects votes for each anecdote and displays the most popular
