@@ -49,7 +49,7 @@ const App = () => {
   const handleChangeAnecdote = () => {
     setSelection(anecdotes[Math.floor(Math.random() * anecdotes.length)])
   }
-  //creates new votes array with the vote count of the current selection 
+  //creates new votes array with the vote count of the current selection increased by one
   const handleUpvote = () => {
     const index = anecdotes.indexOf(selection);
     const votesCopy = [...votes]
