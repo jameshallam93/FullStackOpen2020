@@ -53,7 +53,7 @@ const App = () => {
       }
     ]
   }
-
+const button = ({handleClick, text}) => <div><button onClick = {handleClick}>{text}</button></div> 
   return (
     <div>
       <Header course = {course}/>
