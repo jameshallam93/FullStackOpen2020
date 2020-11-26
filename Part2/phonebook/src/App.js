@@ -1,19 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"
 
 import Person from "./components/Person"
 import Filter from "./components/Filter"
 import Form from "./components/Form"
 import Heading from "./components/Heading"
 
-const App = (props) => {
+const App = () => {
     //persons state, default is people array in index.js (contains names and numbers)
-    const [persons, setPersons] = useState(props.people)
+    const [persons, setPersons] = useState([])
     //newPerson and newNumber are assigned to the form inputs as values
     const [newPerson, setNewPerson] = useState("New name")
   
     const [newNumber, setNewNumber] = useState("telephone no.")
   
     const [newSearch, setSearch] = useState("")
+
+    useEffect(()=>{
+      axios.get("http://localhost:3001/persons")
+      .then(response =>{
+        setPersons(response.data)
+      })
+    },[])
 
     //check to see if anything has been entered in the search/filter box
     const isSearch = () =>{
@@ -41,7 +49,6 @@ const App = (props) => {
       event.preventDefault()
         //target is an array referring to different inputs and related values,
         // each target element contains 1 value
-      const newName = event.target.value;
       const newTel = event.target[1].value;    
   
       const personObject = {
