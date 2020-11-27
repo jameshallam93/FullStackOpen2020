@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
+//to set background to Grey - weather icons don't show up on white background
 import "./App.css"
 import Display from "./components/Display"
 
