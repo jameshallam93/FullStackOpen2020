@@ -1,8 +1,6 @@
 import React, { useState, useEffect }  from 'react'
 import Note from './components/Note.js';
-import { nanoid } from 'nanoid'
-import Axios from 'axios';
-
+import noteService from "./services/notes"
 
 const App = ({notes}) => {
 
@@ -16,15 +14,14 @@ const App = ({notes}) => {
 
 
   useEffect(()=>{
-    Axios
-    .get("http://localhost:3001/notes")
-    .then(response =>{
-      setNotes(response.data)
+    noteService.getAll()
+    .then(initialNotes =>{
+      setNotes(initialNotes)
     }, []
     )
   }
   )
-
+  
   const notesToShow = (showAll ?
     notez:
     notez.filter(note =>
@@ -39,16 +36,28 @@ const App = ({notes}) => {
       content: newNote,
       date: new Date().toISOString(),
       important : Math.random() < 0.5,
-      id: nanoid()
     }
-    setNotes(notez.concat(noteObject))
-    setNewNote("")
+    noteService.create(noteObject)
+    .then(returnedNote =>{
+      setNotes(notez.concat(returnedNote))
+    })
 
   }
   const handleNoteChange = (event) => {
     console.log(event.target.value)
     setNewNote(event.target.value)
 
+  }
+
+  const toggleImportance = id =>{
+
+    const note = notez.find(note => note.id === id)
+    const newNote = {...note, important : !note.important}
+    noteService.update(id, newNote)
+    .then(returnedNote =>{
+      setNotes(notez.map(note => note.id !== id ? note : returnedNote))
+    }).then(console.log(`Note importance now set to ${note.important}`))
+    
   }
 
   return(
@@ -63,7 +72,7 @@ const App = ({notes}) => {
 
       <ul>
         {notesToShow.map(note =>
-          <Note note = {note} key = {note.id}/>
+          <Note note = {note} key = {note.id} toggleImportance = {() => toggleImportance(note.id)}/>
         )}
       </ul>
 

@@ -6,6 +6,7 @@ const Weather = ({country}) =>{
 
 
     const [currentData, setData] = useState([])
+    //used state for icon as accessing data object items proved troublesome.
     const [weatherIcon, setIcon] = useState()
 
 
@@ -14,6 +15,7 @@ const Weather = ({country}) =>{
         Axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${process.env.REACT_APP_WEATHER_API}`)
         .then(response =>{
             setData(response.data.main)
+            //for catching 40x errors
         }).catch(error =>{
             console.log("Error:",error)
         }), [])
@@ -26,6 +28,8 @@ const Weather = ({country}) =>{
             console.log("Error:",error)
         }), [])
         
+        //temp is currently returned in Kelvin - using &units=metric seems to break the API.
+        //converted to Kelvin in return statement - may be better to do it here?   
         const temp = currentData.temp
       
     return(
