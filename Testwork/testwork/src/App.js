@@ -1,5 +1,6 @@
 import React, { useState, useEffect }  from 'react'
 import Note from './components/Note.js';
+import Notification from "./components/Notification"
 import noteService from "./services/notes"
 
 const App = ({notes}) => {
@@ -12,15 +13,17 @@ const App = ({notes}) => {
   
   const [showAll, setShowAll] = useState(true)
 
+  const [errorMessage, setMessage] = useState(null)
+
 
   useEffect(()=>{
     noteService.getAll()
     .then(initialNotes =>{
       setNotes(initialNotes)
-    }, []
+    }
     )
   }
-  )
+  ,[])
   
   const notesToShow = (showAll ?
     notez:
@@ -57,6 +60,11 @@ const App = ({notes}) => {
     .then(returnedNote =>{
       setNotes(notez.map(note => note.id !== id ? note : returnedNote))
     }).then(console.log(`Note importance now set to ${note.important}`))
+    .catch(error => {
+      setMessage(`Error: ${error} : ${note.content} was already deleted`)
+      setTimeout(() =>{setMessage(null)}, 5000)
+      setNotes(notes.filter(n => n.id !== id))
+  })
     
   }
 
@@ -64,7 +72,7 @@ const App = ({notes}) => {
 
     <div>
       <h1>Notes</h1>
-
+      <Notification message = {errorMessage}/>
       <button onClick =
        {() => setShowAll(!showAll)}
        >Show {showAll ? "important" : "all" }

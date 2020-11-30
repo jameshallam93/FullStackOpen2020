@@ -1,8 +1,11 @@
 import React from 'react';
+import Heading from "./Heading"
 
-const Form = (props)=>{
-    return(
-    <form onSubmit = {props.handleNewPerson}>
+const Form = (props)=>
+
+      <>
+    <Heading text = {"Add a new number"}/>
+    <form onSubmit = {props.onSubmit}>
           <div>Name:
             <input value = {props.valuePers}
             onChange = {props.onPersChange}>
@@ -14,7 +17,8 @@ const Form = (props)=>{
   
           <button type = {"submit"}>new person</button>
         </form>
-    )
-}
+    </>
+    
+
 
 export default Form

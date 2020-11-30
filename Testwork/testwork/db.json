@@ -41,6 +41,24 @@
       "date": "2020-11-29T14:35:50.669Z",
       "important": true,
       "id": 7
+    },
+    {
+      "content": "Test",
+      "date": "2020-11-30T17:44:23.975Z",
+      "important": false,
+      "id": 8
+    },
+    {
+      "content": "New one",
+      "date": "2020-11-30T17:45:14.772Z",
+      "important": false,
+      "id": 9
+    },
+    {
+      "content": "a new note..",
+      "date": "2020-11-30T17:46:08.509Z",
+      "important": true,
+      "id": 10
     }
   ]
 }
