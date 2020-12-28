@@ -30,6 +30,7 @@ const App = () => {
     const isSearch = () =>{
       return !(newSearch === "")
     }
+
     //if search box is empty, return all - otherwise only return those that include newSearch state
     //toLowerCase ensures caps don't matter in search term
     const filteredPersons = (
@@ -38,8 +39,8 @@ const App = () => {
         person.name.toLowerCase().includes(newSearch.toLowerCase()))
         :
         persons
-      
     )
+
     // checks to see if persons state contains a name already
     const listContainsName = (name) =>{
       const names = persons.map(person =>{
@@ -47,7 +48,13 @@ const App = () => {
       })
       return names.includes(name)
     }
-    
+
+    // avoid copy/paste code
+    const setMessageTimeout = (message) =>{
+      setMessage(message)
+      setTimeout(()=>{setMessage(null)},5000)
+    }
+
     const updatePerson = (personObject, id) =>{
       PersonService.update(personObject, id)
       .then(returnedPerson =>
@@ -57,18 +64,17 @@ const App = () => {
           :
           returnedPerson)))
           .catch(() =>{
-            setMessage(`Error: ${personObject.name} has already been deleted from the server`)
-            setTimeout(()=>{setMessage(null)},5000)
+            setMessageTimeout(`Error: ${personObject.name} has already been deleted from the server`)
           })
-      setMessage(`${personObject.name} has been updated`)
-      setTimeout(()=>{setMessage(null)},5000)
+      setMessageTimeout(`${personObject.name} has been updated`)
     }
 
-    const handleExistingPerson = (personObject, newPerson) =>{
+    const handleExistingPerson = (personObject) =>{
       if (window.confirm(
-        `${newPerson} is already added to the phonebook, replace the old number with a new one?`)){
+        `${personObject.name} is already added to the phonebook, replace the old number with a new one?`)){
           //finds the id of the "new" person object from persons state
-          const id = persons.filter(person => person.name === personObject.name)[0].id
+          const id = persons.filter(person =>
+            person.name === personObject.name)[0].id
           updatePerson(personObject, id)
         
       }
@@ -77,7 +83,7 @@ const App = () => {
     const handleNewPerson = (event) =>{
       //prevents default form handling
       event.preventDefault()
-
+      //two state strings linked to text boxes
       const personObject = {
         name: newPerson,
         number: newNumber
@@ -85,7 +91,7 @@ const App = () => {
 
       //checks to see if persons state already contains newPerson, and handles update if so
       if(listContainsName(newPerson)){
-        handleExistingPerson(personObject, newPerson)
+        handleExistingPerson(personObject)
       }
       else{
       PersonService
@@ -96,31 +102,61 @@ const App = () => {
 
       setNewPerson("")
       setNewNumber("")
-      console.log(notificationMessage)
-      setMessage(`${newPerson} has been added to the phonebook`)
-      setTimeout(()=>{setMessage(null)}, 5000)
+      setMessageTimeout(`${newPerson} has been added to the phonebook`)
       }
     }
 
     const handleDelete = (id) =>{
+
       const personToDelete = persons.filter(person => person.id === id)[0].name
 
       if (window.confirm(`Are you sure you want to delete ${personToDelete}?`)){
       PersonService.handleDelete(id)
       setPersons(persons.filter(person => 
         person.id !== id))
-        setMessage(`${personToDelete} has been deleted`)
-        setTimeout(()=>{setMessage(null)},5000)
+        setMessageTimeout(`${personToDelete} has been deleted`)
       }
     }
-  
+    
+    const uniStyle = {
+      background:"lightGrey"
+    }
+    const personBoxStyle = {
+      border:"solid",
+      color:"green",
+      margin:"left",
+      width:300,
+      background:"lightGreen"
+    }
+    const formBoxStyle = {
+      ...personBoxStyle,
+      width:475,
+      height:55
+    }
+    const searchBoxStyle = {
+      ...personBoxStyle,
+      height:35
+    }
+
     return(
-        <div>
+        <div style = {uniStyle}>
+
+          <Heading text = {"Search for a name"}/>
+
           <Notification message = {notificationMessage}/>
+
+          <div style = {searchBoxStyle}>
+
             <Filter value = {newSearch}
               onChange = {(event) =>{
                 setSearch(event.target.value)}}
             />
+
+          </div>
+
+          <Heading text = {"Add a new contact"}/>
+
+          <div style = {formBoxStyle}>
 
             <Form onSubmit = {handleNewPerson}
               valuePers = {newPerson}
@@ -129,15 +165,23 @@ const App = () => {
               //without these, text box is not mutable.
               onPersChange = {(event) => setNewPerson(event.target.value)}
               onNumChange = {(event) => setNewNumber(event.target.value)}
-            />
+              />
 
-            <Heading text = {"Numbers"}/>
+          </div>
+
+
+          <Heading text = {"Numbers"}/>
+
+          <div style = {personBoxStyle}>
 
             {filteredPersons.map(person =>
               <Person key = {person.name} 
               person = {person} 
-              handleDelete = {handleDelete}/>
+              handleDelete = {handleDelete}
+              />
             )}
+
+          </div>
         </div>
     )
   }
