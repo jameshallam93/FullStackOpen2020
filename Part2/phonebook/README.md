@@ -6,7 +6,7 @@ backend:
 https://github.com/jameshallam93/fullstackBackend
 
 
-# Created as part of coursework for Helsinki Uni's Fullstack Open 2020 course
+# Created as part of coursework for [Helsinki Uni's Fullstack Open 2020](https://fullstackopen.com/en/) course
 - React (frontend)
 - Node JS (Backend)
 - Express
