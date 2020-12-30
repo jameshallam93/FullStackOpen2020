@@ -1,6 +1,6 @@
 # FullStackOpen2020
 
-For the submission of exercises relating to the Fullstack 2020 course created by the University of Helsinki.
+For the submission of exercises relating to [Helsinki Uni's Fullstack Open 2020](https://fullstackopen.com/en/) course.
 
 
 # Part0
