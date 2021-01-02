@@ -51,6 +51,11 @@ const App = ({notes}) => {
     setNewNote(event.target.value)
 
   }
+  const handleDelete = id =>{
+
+    noteService.remove(id)
+    setNotes(notez.filter(note => note.id !== id))
+  }
 
   const toggleImportance = id =>{
 
@@ -63,7 +68,7 @@ const App = ({notes}) => {
     .catch(error => {
       setMessage(`Error: ${error} : ${note.content} was already deleted`)
       setTimeout(() =>{setMessage(null)}, 5000)
-      setNotes(notes.filter(n => n.id !== id))
+      setNotes(notez.filter(n => n.id !== id))
   })
     
   }
@@ -80,7 +85,7 @@ const App = ({notes}) => {
 
       <ul>
         {notesToShow.map(note =>
-          <Note note = {note} key = {note.id} toggleImportance = {() => toggleImportance(note.id)}/>
+          <Note note = {note} key = {note.id} handleDelete = {() =>handleDelete(note.id)} toggleImportance = {() => toggleImportance(note.id)}/>
         )}
       </ul>
 

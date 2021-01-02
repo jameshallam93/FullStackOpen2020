@@ -11,10 +11,14 @@ const create = (newObject) =>{
     return request.then(response => response.data)
 }
 const update = (id, newObject) =>{
-
+    console.log(`ID: ${id}, baseurl: ${baseUrl}`)
     const request =  Axios.put(`${baseUrl}/${id}`, newObject)
     return request.then(response => response.data)
 }
 
+const remove = (id) =>{
+    Axios.delete(`${baseUrl}/${id}`)
 
-export default { getAll, create, update }
+}
+
+export default { getAll, create, update, remove }
