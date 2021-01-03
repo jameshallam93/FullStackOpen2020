@@ -25,7 +25,7 @@ const Notification = ({message}) =>{
             messageStyle
         )
 
-        console.log(`Notification: ${message}`)
+
 
         return(
             <div style = {styleToUse}>
