@@ -13,14 +13,10 @@ app.use(express.static("build"))
 app.use(morgan("tiny"))
 
 
-app.post("/api/notes", (request, response) =>{
+app.post("/api/notes", (request, response, next) =>{
+
     const body = request.body
 
-    if (body.content === undefined){
-        return response.status(400).json({
-            error: "Content missing"
-        })
-    }
     const note = new Note({
         content: body.content,
         important: body.important || false,
@@ -29,6 +25,7 @@ app.post("/api/notes", (request, response) =>{
     note.save().then(savedNote =>{
         response.json(savedNote)
     })
+    .catch(error =>next(error))
 })
 
 
@@ -56,7 +53,7 @@ app.get("/api/notes/:id", (request, response, next) =>{
     })
 })
 
-app.delete("/api/notes/:id", (response,request,next) =>{
+app.delete("/api/notes/:id", (request,response,next) =>{
     Note.findByIdAndRemove(request.params.id)
     .then(response.status(204).end())
     .catch(error =>next(error))
@@ -80,6 +77,8 @@ const errorHandler = (error, request, response, next) =>{
     console.error(error.message)
     if (error.name === "CastError"){
         response.status(400).send({error: "Malformatted id"})
+    }else if (error.name ==="ValidationError"){
+        response.status(400).json({error: error.message})
     }
     next(error)
 }

@@ -6,6 +6,7 @@ import Form from "./components/Form"
 import Heading from "./components/Heading"
 import Notification from "./components/Notification"
 import PersonService from "./services/persons"
+import { getNodeText } from "@testing-library/react";
 
 const App = () => {
 
@@ -98,11 +99,12 @@ const App = () => {
       .addNew(personObject)
       .then(returnedPerson =>{
         setPersons(persons.concat(returnedPerson))
+        setNewPerson("")
+        setNewNumber("")
+        setMessageTimeout(`${newPerson} has been added to the phonebook`)
       })
-
-      setNewPerson("")
-      setNewNumber("")
-      setMessageTimeout(`${newPerson} has been added to the phonebook`)
+      .catch(error =>
+        setMessageTimeout(error.response.data.error))
       }
     }
 
