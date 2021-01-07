@@ -1,4 +1,5 @@
 const logger = require("./logger")
+const bodyParser
 
 const requestLogger = (request, response, next) =>{
     logger.info(`Body: ${request.body}`)
