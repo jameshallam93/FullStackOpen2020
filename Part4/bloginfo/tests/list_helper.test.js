@@ -3,6 +3,7 @@ const dummy = listHelper.dummy
 const totalLikes = listHelper.totalLikes
 const favoriteBlog = listHelper.favoriteBlog
 const mostBlogs = listHelper.mostBlogs
+const mostLikes = listHelper.mostLikes
 
 
 
@@ -61,10 +62,34 @@ describe("favorite blog ", ()=>{
 
     test("out of a list of one, returns that blog", ()=>{
         const result = favoriteBlog(listWithOneBlog)
-        console.log(result);
-        
 
         expect(result).toEqual(listWithOneBlog[0])
+    })
+
+})
+
+describe("most blogs ", ()=>{
+
+    test("out of an empty list returns error object", ()=>{
+    
+        result = mostBlogs([])
+        
+        expect(result).toEqual({error: "List contains no blogs"})
+    })
+
+    test("out of a list containing one blog, returns info on author of that blog", ()=>{
+        result = mostBlogs(listWithOneBlog)
+
+        expect(result).toEqual({
+            author: 'Edsger W. Dijkstra',
+            blogs: 1
+        })
+    })
+})
+
+describe("author with most likes ", ()=>{
+    test("out of an empty list returns error object", ()=>{
+
     })
 
 })
