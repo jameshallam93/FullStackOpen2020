@@ -89,7 +89,25 @@ describe("most blogs ", ()=>{
 
 describe("author with most likes ", ()=>{
     test("out of an empty list returns error object", ()=>{
+        const result = mostLikes([])
 
+        expect(result).toEqual({error: "List contains no blogs"})
     })
 
+    test("Out of a list containing one blog, returns info of that author", ()=>{
+        const result = mostLikes(listWithOneBlog)
+
+        expect(result).toEqual({
+            author: "Edsger W. Dijkstra",
+            likes:5
+        })
+    })
+
+    test("out of a list of blogs, selects the most popular author and correctly states their total likes", ()=>{
+        const result = mostLikes(blogs)
+
+        expect(result).toEqual({
+            author: 'Edsger W. Dijkstra',
+            likes: 17 })
+    })
 })
