@@ -1,10 +1,12 @@
 require("dotenv").config()
 
-const MONGO_DB_URL = process.env.MONGODB_URL
+let MONGO_DB_URL = process.env.MONGODB_URL
 
 
 if (process.env.NODE_ENV === "test"){
-    MONGO_DB_URL = process.env.MONGOBD_TEST_URL
+    console.log(`test url: ${process.env.MONGODB_TEST_URL}`);
+    
+    MONGO_DB_URL = process.env.MONGODB_TEST_URL
 }
 
 const PORT = process.env.PORT

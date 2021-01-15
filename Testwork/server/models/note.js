@@ -18,7 +18,11 @@ const noteSchema = new mongoose.Schema({
         type:Date,
         required:true
     },
-    important:Boolean
+    important:Boolean,
+    user:{
+        ref:"User",
+        type:mongoose.Schema.Types.ObjectId
+    }
 })
 
 noteSchema.plugin(uniqueValidator)

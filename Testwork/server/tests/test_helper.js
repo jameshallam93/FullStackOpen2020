@@ -1,4 +1,5 @@
 const Note = require("../models/note")
+const User = require("../models/user")
 
 const notes = [
     {
@@ -12,7 +13,12 @@ const notes = [
         important: true
     }
 ]
+const usersInDb = async () =>{ 
+    const users = await User.find({})
+    return users.map(user =>
+        user.toJSON())
 
+}
 const nonExistingId = async () =>{
     const note = {
         content:"should be auto removed",
@@ -33,5 +39,5 @@ const notesFromDb = async () =>{
 }
 
 module.exports = {
-    notesFromDb, notes, nonExistingId
+    notesFromDb, notes, nonExistingId, usersInDb
 }
