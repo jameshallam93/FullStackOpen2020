@@ -1,7 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5vdEphbWVzIiwiaWQiOiI2MDAxYjdkNzdjYjAyODAxMThjNTg2MjAiLCJpYXQiOjE2MTEyMzAzMjJ9.5mw5Ks28wKfThtljsuzR6hOOpfG6bX7CZ1ORcAY4Vrk
 
 {
-    "content": "This is a test note",
+    "content": "Note with token authorization",
     "important": true
 }

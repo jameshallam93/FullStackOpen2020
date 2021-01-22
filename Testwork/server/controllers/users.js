@@ -10,8 +10,6 @@ userRouter.post('/', async (request, response) => {
     response.status(400).json({error:"password must be 8 characters or more"})
   }
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
-
-  
   
   const user = new User({
     username: body.username,
@@ -26,8 +24,9 @@ userRouter.post('/', async (request, response) => {
 
 userRouter.get("/", async (request, response) =>{
   const users = await User.find({})
-
+  .populate("notes", {content:1, date: 1})
   response.json(users)
 })
+
 
 module.exports = userRouter

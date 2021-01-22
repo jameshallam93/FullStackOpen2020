@@ -1,6 +1,7 @@
 const logger = require("./logger")
 
 
+
 const requestLogger = (request, response, next) =>{
     logger.info(`method: ${request.method}`)
     logger.info(`path: ${request.path}`)
@@ -11,13 +12,25 @@ const requestLogger = (request, response, next) =>{
 
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
-
-    if (error.name === "ValidationError"){
-        response.status(400).json({error:error.message}.end())
-    }else if(error.name === "CastError"){
-        response.send({error:"malformatted id"})
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
+        return response.status(400).send({ error: 'malformatted id' })}
+    else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }else if(error.name === "JsonWebTokenError"){
+        return response.status(401).send({error:"Invalid token"})
     }
     next(error)
+}
+
+const getToken = (request, response, next) =>{
+
+    const authorization = request.get("authorization")
+
+    if (authorization && authorization.toLowerCase().startsWith("bearer")){
+        request.token = authorization.substring(7)
+        logger.info(`From getToken middleware, token is currently ${request.token}`)
+    }
+    next()
 }
 
 const unknownEndpoint = (request, response) =>{
@@ -26,5 +39,6 @@ const unknownEndpoint = (request, response) =>{
 module.exports = {
     requestLogger,
     errorHandler,
-    unknownEndpoint
+    unknownEndpoint,
+    getToken
 }
