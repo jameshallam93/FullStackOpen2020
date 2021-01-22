@@ -17,7 +17,7 @@ beforeEach(async ()=>{
     await Promise.all(promiseArray)
 })
 
-describe("notes that are saved in the database ", ()=>{
+describe("blogs that are saved in the database ", ()=>{
 
     test("are all returned in json format", async ()=>{
         const result = await api
@@ -37,7 +37,15 @@ describe("notes that are saved in the database ", ()=>{
     test("can be deleted", async () =>{
         const blogsAtStart = await helper.blogsFromDb()
         const idToDelete = (blogsAtStart.map(blog => blog.id))[0]
-        const result = await api.delete(`/api/blogs/${idToDelete}`)
+        
+        const token = await api
+        .post("/api/login")
+        .send({username:"BigCheese", password:"existing"})
+        console.log(`token = ${token}`)
+
+        const result = await api
+            .delete(`/api/blogs/${idToDelete}`)
+            .set("Authorization", "")
             .expect(204)
 
         const blogsAtEnd = await helper.blogsFromDb()
@@ -83,8 +91,9 @@ describe("when sending new blogs, ", () =>{
         const blogObject = new Blog(blogNoTitle)
 
         await api.post("/api/blogs")
+            .set("Authorization", "bearer ")
             .send(blogObject)
-            .expect(400)
+            .expect(401)
     })
 })
 

@@ -1,7 +1,5 @@
 const logger = require("./logger")
 
-
-
 const requestLogger = (request, response, next) =>{
     logger.info(`method: ${request.method}`)
     logger.info(`path: ${request.path}`)
@@ -21,7 +19,7 @@ const errorHandler = (error, request, response, next) => {
     }
     next(error)
 }
-
+// middleware for retrieving token from authorization header and adding it to request object
 const getToken = (request, response, next) =>{
 
     const authorization = request.get("authorization")

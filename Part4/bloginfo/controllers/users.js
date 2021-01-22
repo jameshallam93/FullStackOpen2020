@@ -1,12 +1,12 @@
 const bcrypt = require("bcrypt")
 const User = require("../models/user")
 const userRouter = require("express").Router()
-const jwt = require("jsonwebtoken")
+
 
 
 userRouter.post("/", async (request, response) =>{
-    const body = await request.body
-
+    const body = request.body
+    //for bcrypt hashing
     const saltRounds = 10
 
     if (body.password.length < 3){
@@ -28,8 +28,6 @@ userRouter.post("/", async (request, response) =>{
 })
 
 userRouter.get("/", async (request, response) =>{
-    const body = request.body
-
     const users = await User.find({})
 
     response.status(200).json(users)
