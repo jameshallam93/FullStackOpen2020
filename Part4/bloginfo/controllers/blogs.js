@@ -43,7 +43,9 @@ blogRouter.delete("/:id", async (request, response) =>{
     const id = request.params.id
 
     const token = request.token
+    console.log(`token from blogrouter delete: ${token}`)
     const decodedToken = jwt.verify(token, process.env.SECRET)
+    console.log(`decoded token from blogrouter delete ${JSON.stringify(decodedToken)}`)
 
     if (!(token || decodedToken.id)){
         response
@@ -52,6 +54,7 @@ blogRouter.delete("/:id", async (request, response) =>{
     }
 
     const blogToDelete = await Blog.findById(id)
+    console.log(`blog to delete ${JSON.stringify(blogToDelete)}`)
 
     if (blogToDelete.user.toString() !== decodedToken.id.toString()){
         response.status(401).json({error:"Only user who created note can delete it"})

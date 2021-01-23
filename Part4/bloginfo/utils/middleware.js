@@ -10,6 +10,7 @@ const requestLogger = (request, response, next) =>{
 
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
+
     if (error.name === 'CastError' && error.kind === 'ObjectId') {
         return response.status(400).send({ error: 'malformatted id' })}
     else if (error.name === 'ValidationError') {
@@ -26,7 +27,7 @@ const getToken = (request, response, next) =>{
 
     if (authorization && authorization.toLowerCase().startsWith("bearer")){
         request.token = authorization.substring(7)
-        logger.info(`From getToken middleware, token is currently ${request.token}`)
+        logger.info(`DEBUG, DELETE: From getToken middleware, token is currently ${request.token}`)
     }
     next()
 }

@@ -9,31 +9,31 @@ const helper = require("../utils/api_test_helper")
 const newUser = {
     username:"BigBoyBen",
     name:"Benjamin",
-    password:"ostrich"
+    password:"ostriches"
 }
 const existingUser = {
     username: "BigCheese",
     name: "Martha",
     password:"existing"
 }
-
+beforeEach(async ()=>{
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash("remember", 10)
+    const userToSave = new User({
+        username:"BigCheese",
+        name:"Tomas",
+        passwordHash: passwordHash
+    })
+    await userToSave.save()
+}
+)
 
 describe("when there is one user in the database ",() =>{
 
-    beforeEach(async ()=>{
-        await User.deleteMany({})
-        const passwordHash = await bcrypt.hash("remember", 10)
-        const userToSave = new User({
-            username:"BigCheese",
-            name:"Tomas",
-            passwordHash: passwordHash
-        })
-        await userToSave.save()
-    }
-    )
+
     test("valid user can be added", async () =>{
         const usersAtStart = await helper.usersFromDb()
-    
+
         const result = await api.post("/api/users")
             .send(newUser)
             .expect(200)

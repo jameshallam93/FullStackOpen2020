@@ -1,19 +1,55 @@
 const supertest = require("supertest")
 const mongoose = require("mongoose")
+const bcrypt = require("bcrypt")
 const app = require("../app")
 const Blog = require("../models/blog")
+const User = require("../models/user")
 const helper = require("../utils/api_test_helper")
 const api = supertest(app)
 const logger = require("../utils/logger")
+const middleware = require("../utils/middleware")
+
+//before each --
+// create new account (api.post("/api/users"))
+// login (api.post("/api/login")) and declare auth token so its avaiable in scope of all tests 
+// create array of blog object promises with auth token attached, promise.all
+
+
+//declared for global scope
+let token;
 
 beforeEach(async ()=>{
+    //delete all users, create new and save to db
+    await User.deleteMany()
+    const passwordHash = await bcrypt.hash("testing123", 10)
+    const userForTests = new User ({
+        username:"Amanda HuginKiss",
+        name:"Amanda",
+        passwordHash
+    })
+    //saves user, gets new user object from db and saves id
+    const newUser = await userForTests.save({new:true})
+    const userId = newUser._id
+
+    //updates all blogs to have new userid property
+    const updatedBlogs = helper.blogsAtStart.map(blog =>
+        ({...blog, user: userId}))
+    console.log(`update blogs: ${JSON.stringify(updatedBlogs)}`)
+    //logs in with user creds and saves token - available through variable declared globally above
+    const result = await api
+        .post("/api/login")
+        .send({username:"Amanda HuginKiss", password:"testing123"})
+
+    token = ("Bearer ").concat(result.body.token)
+    //deletes all blogs, takes updated blogs and saves to promise array
     await Blog.deleteMany()
-    const blogObjects = helper.blogsAtStart.map(blog =>
+    const blogObjects = updatedBlogs.map(blog =>
         new Blog(blog)
         )
     const promiseArray = blogObjects.map(object =>
         object.save()
         )
+    //awaits resolution of all promises saved to array - could access returned value array by saving to variable
     await Promise.all(promiseArray)
 })
 
@@ -37,15 +73,11 @@ describe("blogs that are saved in the database ", ()=>{
     test("can be deleted", async () =>{
         const blogsAtStart = await helper.blogsFromDb()
         const idToDelete = (blogsAtStart.map(blog => blog.id))[0]
-        
-        const token = await api
-        .post("/api/login")
-        .send({username:"BigCheese", password:"existing"})
-        console.log(`token = ${token}`)
-
+        console.log(`id to delete from test ${idToDelete}`)
+        console.log(`Token as appears in deletion test: ${token}`)
         const result = await api
             .delete(`/api/blogs/${idToDelete}`)
-            .set("Authorization", "")
+            .set("Authorization", token)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsFromDb()
@@ -59,6 +91,7 @@ describe("when sending new blogs, ", () =>{
         const blogObject = (helper.newBlog)
         await api.post("/api/blogs")
             .send(blogObject)
+            .set("Authorization", token)
             .expect(201)
             .expect("Content-Type", /application\/json/)
     
@@ -76,6 +109,7 @@ describe("when sending new blogs, ", () =>{
 
         const result = await api.post("/api/blogs")
             .send(blogObjectNoLikes)
+            .set("Authorization", token)
             .expect(201)
             .expect("Content-Type", /application\/json/)   
         
