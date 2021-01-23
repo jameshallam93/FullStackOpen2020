@@ -7,10 +7,10 @@ const User = require("../models/user")
 const helper = require("../utils/api_test_helper")
 const api = supertest(app)
 const logger = require("../utils/logger")
-const middleware = require("../utils/middleware")
+
 
 //before each --
-// create new account (api.post("/api/users"))
+// delete all users, create new account (api.post("/api/users"))
 // login (api.post("/api/login")) and declare auth token so its avaiable in scope of all tests 
 // create array of blog object promises with auth token attached, promise.all
 
@@ -34,7 +34,6 @@ beforeEach(async ()=>{
     //updates all blogs to have new userid property
     const updatedBlogs = helper.blogsAtStart.map(blog =>
         ({...blog, user: userId}))
-    console.log(`update blogs: ${JSON.stringify(updatedBlogs)}`)
     //logs in with user creds and saves token - available through variable declared globally above
     const result = await api
         .post("/api/login")
@@ -73,8 +72,7 @@ describe("blogs that are saved in the database ", ()=>{
     test("can be deleted", async () =>{
         const blogsAtStart = await helper.blogsFromDb()
         const idToDelete = (blogsAtStart.map(blog => blog.id))[0]
-        console.log(`id to delete from test ${idToDelete}`)
-        console.log(`Token as appears in deletion test: ${token}`)
+
         const result = await api
             .delete(`/api/blogs/${idToDelete}`)
             .set("Authorization", token)
