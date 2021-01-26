@@ -1,30 +1,21 @@
 const bcrypt = require("bcrypt")
 const User = require("../models/user")
 const userRouter = require("express").Router()
+const helper = require("../utils/api_helper").userApiFunctions
+
 
 
 
 userRouter.post("/", async (request, response) =>{
     const body = request.body
-    //for bcrypt hashing
-    const saltRounds = 10
-
-    if (body.password.length < 3){
-        response.status(401).json({error:"password must be at least 3 characters"})
-    }else if(body.username.length < 3){
-        response.status(401).json({error:"username must be at least 3 characters"})
+    //breaks out of function if username/password less than 3 chars, returns status code
+    if (helper.validateBody(body, response) !== 1){
+        return
     }
-    const passwordHash = await bcrypt.hash(body.password, saltRounds)
-
-    const userToSave =  new User ({
-        username:body.username,
-        name:body.name,
-        passwordHash
-    })
-    const result = await userToSave.save()
+    //generateUser invokes generateHash to create password hash inside itself
+    const result = await helper.generateUser(body)
 
     response.json(result)
-
 })
 
 userRouter.get("/", async (request, response) =>{

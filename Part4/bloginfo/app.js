@@ -11,16 +11,11 @@ const loginRouter = require("./controllers/login")
 const config = require("./utils/config")
 const logger = require("./utils/logger")
 
-
-
-logger.info(`connecting to database ${config.MONGO_DB_URL}`)
-mongoose.connect(config.MONGO_DB_URL, {useFindAndModify:false, useCreateIndex:true, useUnifiedTopology:true, useNewUrlParser:true})
-  .then(() => {
-    logger.info('connected to MongoDB')
-  })
-  .catch((error) =>{
-      logger.error(`error connecting to the database: ${error.message}`)
-  })
+const connect = async () =>{
+  logger.info(`connecting to database ${config.MONGO_DB_URL}`)
+  await mongoose.connect(config.MONGO_DB_URL, {useFindAndModify:false, useCreateIndex:true, useUnifiedTopology:false, useNewUrlParser:true})
+}
+connect()
 
 app.use(cors())
 app.use(express.json())

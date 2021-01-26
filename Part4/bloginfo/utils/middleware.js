@@ -13,6 +13,9 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError' && error.kind === 'ObjectId') {
         return response.status(400).send({ error: 'malformatted id' })}
+    else if (error.name === "MongoParseError") {
+        return response.status(400).json({erro :error.message})
+    }
     else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message })
     }else if(error.name === "JsonWebTokenError"){

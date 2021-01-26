@@ -71,8 +71,26 @@ notesRouter.put("/:id", async (request, response, next) =>{
 })
 
 notesRouter.delete("/:id", async (request, response, next) =>{
+    const token = getToken(request)
+    console.log(`token from notesRouter delete ${token}`);
+    
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!(token || decodedToken.id)){
+        return response
+            .status(401)
+            .json({error:"missing or invalid token"})
+    }
+
+    const noteToDelete = await Note.findById(request.params.id)
+
+    if ((decodedToken.id.toString()) !==(noteToDelete.user.toString())){
+        response
+            .status(401)
+            .json({error:"Only notes author can delete it"})
+    }
+
     await Note.findByIdAndDelete(request.params.id)
-        
     response.status(204).end()
 })
 
