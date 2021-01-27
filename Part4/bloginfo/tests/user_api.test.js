@@ -49,19 +49,13 @@ describe("when there is one user in the database ",() =>{
     
     })
     
-    test("a user with an existing username will not be added", async ()=>{
-        const usersAtStart = await helper.usersFromDb()
+    test("a user with an existing username will return status 400", async ()=>{
 
         const result = await api.post("/api/users")
         .send(existingUser)
         .expect(400)
         .expect("Content-Type", /application\/json/)
     
-        expect(result.body.error).toContain("`username` to be unique")
-    
-        const usersAtEnd = await helper.usersFromDb()
-    
-        expect(usersAtStart).toHaveLength(usersAtEnd.length)
     })
 })
 

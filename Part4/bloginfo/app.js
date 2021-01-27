@@ -11,9 +11,14 @@ const loginRouter = require("./controllers/login")
 const config = require("./utils/config")
 const logger = require("./utils/logger")
 
+const topology = process.env.UNIFIED_TOPOLOGY === "true" ?
+true
+:
+false
+
 const connect = async () =>{
   logger.info(`connecting to database ${config.MONGO_DB_URL}`)
-  await mongoose.connect(config.MONGO_DB_URL, {useFindAndModify:false, useCreateIndex:true, useUnifiedTopology:false, useNewUrlParser:true})
+  await mongoose.connect(config.MONGO_DB_URL, {useFindAndModify:false, useCreateIndex:true, useUnifiedTopology:true, useNewUrlParser:true})
 }
 connect()
 

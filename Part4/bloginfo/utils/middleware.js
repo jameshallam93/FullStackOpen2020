@@ -30,7 +30,6 @@ const getToken = (request, response, next) =>{
 
     if (authorization && authorization.toLowerCase().startsWith("bearer")){
         request.token = authorization.substring(7)
-        logger.info(`DEBUG, DELETE: From getToken middleware, token is currently ${request.token}`)
     }
     next()
 }
