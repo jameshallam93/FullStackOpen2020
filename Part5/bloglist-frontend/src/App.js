@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from "./components/BlogForm"
+import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
-import blogService from './services/blogs'
 import loginService from "./services/login"
+import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,13 +14,24 @@ const App = () => {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
-  const [notification, setNotification] = useState("Test notification")
+  //two strings, one defining the type of notification ("Error"/"Message") and one with the message contents
+  //set as null for conditional rendering of notification message
+  const [notification, setNotification] = useState([null,null])
+
+
+  const timeoutNotification = (message, time) =>{
+    setNotification(message)
+    setTimeout(()=>{
+      setNotification([null,null])
+    }, time)
+  }
 
   useEffect(() =>{
     const user = JSON.parse(window.localStorage.getItem("loggedUser"))
     if (user){
       setUser(user)
       blogService.setToken(user.token)
+      timeoutNotification(["Message",`Welcome back ${user.name}`],3000)
     }
   },[])
   
@@ -26,11 +39,9 @@ const App = () => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
-    setNotification("All blogs loaded")
-    setTimeout(()=>{
-      setNotification(null)
-    }, 5000)
   }, [])
+
+
   const clearLoginBox = () =>{
     setUsername("")
     setPassword("")
@@ -40,24 +51,30 @@ const App = () => {
     event.preventDefault()
     try{
     const user = await loginService.login({username, password})
-  
+      //set user state, token and local storage variable
     setUser(user)
     blogService.setToken(user.token)
     window.localStorage.setItem("loggedUser", JSON.stringify(user))
+
     clearLoginBox()
+    timeoutNotification(["Message",`${user.username} logged in successfully`], 2500)
   
-    }catch (exception){
+    }
+    catch (exception){
       console.log(exception)
       clearLoginBox()
+      timeoutNotification(["Error","Error: Login failed - please try again"], 2500)
     }
   }
   
 
   const handleLogout = async event =>{
     event.preventDefault()
-    console.log(`${user.username} has logged out`);
+
     setUser(null)
     window.localStorage.removeItem("loggedUser")
+    blogService.setToken("")
+    timeoutNotification(["Message","User has logged out"], 3000)
   }
 
   const clearNewBlogBox = () =>{
@@ -66,106 +83,80 @@ const App = () => {
     setUrl("")
   }
 
+  const saveBlog = async () =>{
+    const newBlog = {
+      title: title,
+      author: author,
+      url: url
+    }
+    const result = await blogService.create(newBlog)
+    return result
+  }
+  
   const handleNewBlog = async event =>{
     event.preventDefault()
     try{
-      const newBlog = {
-        title: title,
-        author: author,
-        url: url
-      }
-      const result = await blogService.create(newBlog)
-      console.log(`result from handle new blog: ${result}`)
+      const result = await saveBlog()
+      timeoutNotification(["Message",`New blog, ${result.title}, has been saved`], 2500)
 
-      blogService.getAll().then(blogs =>
-        setBlogs( blogs )
-      )
+      const returnedBlogs = await blogService.getAll()
+
+      setBlogs(returnedBlogs)
       clearNewBlogBox()
 
     }catch(exception){
-      console.log(exception)
+      timeoutNotification(["Error", exception], 3000)
       clearNewBlogBox()
     }
   }
-  const loginForm = () =>(
-    <form>
-    <div>
-        <h2>login</h2>
-        username
-        <div>
-          <input type = "text"
-          value = {username}
-          name = "username"
-          onChange = {({target})=>{setUsername(target.value)}}>
-          </input>
-        </div>
-        password
-        <div>
-          <input type = "text"
-          value = {password}
-          name = "password"
-          onChange = {({target}) =>{setPassword(target.value)}}>
-          </input>
-        </div>
-        <button type = "submit"
-        onClick = {handleLogin}>
-            login
-        </button>
-    </div>
-    </form>
-)
 
-const newBlogForm = (event) =>(
-  <>
-  <div>
-  title:
-      <input type = "text"
-      name = "title"
-      value = {title}
-      onChange = {({target}) => setTitle(target.value)}
-      ></input>
-  </div>
-  <div>
-  author:
-    <input type = "text"
-    name = "author"
-    value = {author}
-    onChange = {({target}) =>setAuthor(target.value)}
-    />
-
-  </div>
-  <div>
-  url:
-    <input type = "text"
-    name = "url"
-    value = {url}
-    onChange = {({target}) =>setUrl(target.value)}
-    />
-  </div>
-  <button type = "submit"
-  onClick = {handleNewBlog}>
-    create
-  </button>
-  </>
-)
+  
+  const uniStyle = {
+    background:"lightGrey"
+  }
 
 
   return (
-    <div>
-
+    <div style = {uniStyle}>
       <Notification message = {notification} />
-      
+
       {user === null ?
-       loginForm()
+      <>
+       <LoginForm 
+         usernameState = {username}
+         passwordState = {password}
+       
+         usernameFunction =  {setUsername}
+         passwordFunction = {setPassword}
+       
+          onSubmit = {handleLogin}
+       />
+      </>
       :
       <>
       <div>
-        {newBlogForm()}
+        <BlogForm 
+          titleState = {title}
+          authorState = {author}
+          urlState = {url}
+
+          setTitle = {setTitle}
+          setAuthor = {setAuthor}
+          setUrl = {setUrl}
+
+          onSubmit = {handleNewBlog} 
+          />
+
       </div>
       <div>
-       <>{`${JSON.stringify(user.name)} is logged in`}
-       <button type = "submit" onClick = {handleLogout}>Logout</button>
-       </>
+        <>
+          {`${JSON.stringify(user.name)} is logged in`}
+          <button
+            type = "submit"
+            onClick = {handleLogout}>
+              Logout
+          </button>
+        </>
         <h2>blogs</h2>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
@@ -173,6 +164,7 @@ const newBlogForm = (event) =>(
       </div>
       </>
       }
+
     </div>
   )
 }

@@ -1,25 +1,35 @@
 import React from "react"
 
-const LoginForm = ({props}) =>(
+const LoginForm = (props) =>{
+
+    return(
+    <form>
     <div>
         <h2>login</h2>
         username
-        <input type = "text"
-        value = {props.username}
-        name = "username"
-        onChange = {({target})=>{props.setUsername(target.value)}}>
-        </input>
-        <input type = "text"
-        value = {props.password}
-        name = "password"
-        onChange = {({target}) =>{props.setPassword(target.value)}}>
-        </input>
+        <div>
+          <input type = "text"
+          value = {props.usernameState}
+          name = "username"
+          onChange = {({target})=>props.usernameFunction(target.value)}>
+          </input>
+        </div>
+        password
+        <div>
+          <input type = "password"
+          value = {props.passwordState}
+          name = "password"
+          onChange = {({target}) =>props.passwordFunction(target.value)}>
+          </input>
+        </div>
         <button type = "submit"
-        onClick = {props.handleLogin}>
+        onClick = {props.onSubmit}>
             login
         </button>
     </div>
-)
+    </form>
+    )
+}
 
 
 export default LoginForm 
