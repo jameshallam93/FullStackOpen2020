@@ -8,14 +8,16 @@ import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [user, setUser] = useState(null)
+  //below three for creation of new blogs
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
-  //two strings, one defining the type of notification ("Error"/"Message") and one with the message contents
-  //set as null for conditional rendering of notification message
+  //for login form
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [user, setUser] = useState(null)
+  //two strings, one defining the type of notification ("Error"/"Message") and one with the message contents; allows for color coded response boxes
+  //set as null, null for conditional rendering of notification message
   const [notification, setNotification] = useState([null,null])
 
 
@@ -25,7 +27,7 @@ const App = () => {
       setNotification([null,null])
     }, time)
   }
-
+//check to see if user has a valid session open
   useEffect(() =>{
     const user = JSON.parse(window.localStorage.getItem("loggedUser"))
     if (user){

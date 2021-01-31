@@ -34,8 +34,11 @@ const userApiFunctions = {
     })
     const result = await newUser.save()
     return result
+},
+
+    
 }
-}
+
 module.exports = {
     userApiFunctions
 }

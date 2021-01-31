@@ -14,7 +14,7 @@ blogRouter.post("/", async (request, response) =>{
     const body = request.body
     const token = request.token 
     const decodedToken = jwt.verify(token, process.env.SECRET)
-    
+
     if (!(token || decodedToken.id)){
         response
             .status(401)

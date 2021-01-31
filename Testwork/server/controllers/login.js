@@ -20,6 +20,8 @@ loginRouter.post("/", async (request, response) =>{
             error:"incorrect username or password"
         })
     }
+    console.log(`user from controller: ${user}, username ${user.username}`);
+    
     const userForToken = {
         username: user.username,
         id: user._id

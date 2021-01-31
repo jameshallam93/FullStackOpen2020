@@ -30,7 +30,6 @@ beforeEach(async ()=>{
 
 describe("when there is one user in the database ",() =>{
 
-
     test("valid user can be added", async () =>{
         const usersAtStart = await helper.usersFromDb()
 
@@ -46,12 +45,11 @@ describe("when there is one user in the database ",() =>{
         const usernames = usersAtEnd.map(user =>
             user.username)
         expect(usernames).toContain("BigBoyBen")
-    
     })
     
     test("a user with an existing username will return status 400", async ()=>{
 
-        const result = await api.post("/api/users")
+        await api.post("/api/users")
         .send(existingUser)
         .expect(400)
         .expect("Content-Type", /application\/json/)
