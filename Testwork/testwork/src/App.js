@@ -2,6 +2,7 @@ import React, { useState, useEffect }  from 'react'
 import Note from './components/Note.js';
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
+import LoginDisplay from "./components/LoginDisplay"
 import noteService from "./services/notes"
 import loginService from "./services/login"
 
@@ -22,6 +23,9 @@ const App = ({notes}) => {
 
   const [user, setNewUser] = useState(null)
 
+  const [loginVisible, setLoginVisible] = useState(false)
+
+  const [loggedIn, setLoggedin] = useState(false)
 
 
   useEffect(()=>{
@@ -40,6 +44,7 @@ const App = ({notes}) => {
       const user = JSON.parse(userJSON)
       setNewUser(user)
       noteService.setNewToken(user.token)
+      setLoggedin(true)
     }
     
   },[])
@@ -84,7 +89,7 @@ const App = ({notes}) => {
       setNewUser(user)
       noteService.setNewToken(user.token)
       window.localStorage.setItem("loggedUser", JSON.stringify(user))
-
+      setLoggedin(true)
       resetUsernameAndPassword()
 
     }catch(exception){
@@ -98,12 +103,17 @@ const App = ({notes}) => {
       }, 5000)
     }
   }
+  const toggleLoginForm = () =>{
+    setLoginVisible(!loginVisible)
 
+  }
   const handleLogout = (event) =>{
-    //event.preventDefault()
+    event.preventDefault()
     setUsername(null)
     window.localStorage.removeItem("loggedUser")
     noteService.setNewToken(null)
+    setLoggedin(false)
+    setLoginVisible(false)
 
   }
   const handleNoteChange = (event) => {
@@ -150,19 +160,25 @@ const App = ({notes}) => {
     </form>
   )
 
+
+  const showWhenLoggedIn = {display: loggedIn ? "":"none"}
+  const hideWhenLoggedIn = {display: loggedIn ? "none": ""}
   return(
 
     <div>
       {user === null ?
-        <>
+        <div style = {hideWhenLoggedIn}>
         <LoginForm handleLogin = {handleLogin}
         username = {username}
         password = {password}
         handleUsernameChange = {handleUsernameChange}
-        handlePasswordChange = {handlePasswordChange} />
-        </>
+        handlePasswordChange = {handlePasswordChange}
+        loginVisible = {loginVisible}
+        toggleLoginForm = {toggleLoginForm} />
+        </div>
         :
-        <div>
+        <div style = {showWhenLoggedIn}>
+
           <p>{user.name} logged in </p>
           <button onClick = {handleLogout}>
             Logout
@@ -179,7 +195,10 @@ const App = ({notes}) => {
 
       <ul>
         {notesToShow.map(note =>
-          <Note note = {note} key = {note.id} handleDelete = {() =>handleDelete(note.id)} toggleImportance = {() => toggleImportance(note.id)}/>
+          <Note note = {note}
+          key = {note.id}
+          handleDelete = {() =>handleDelete(note.id)}
+          toggleImportance = {() => toggleImportance(note.id)}/>
         )}
       </ul>
 

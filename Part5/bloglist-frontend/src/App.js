@@ -3,30 +3,44 @@ import Blog from './components/Blog'
 import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
+import Togglable from "./components/Togglable"
+import NewUserForm from "./components/NewUserForm"
 import loginService from "./services/login"
 import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //below three for creation of new blogs
+  //below three for creation of new blogs ***REFACTOR***
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
-  //for login form
+  //for login form ***REFACTOR***
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
   //two strings, one defining the type of notification ("Error"/"Message") and one with the message contents; allows for color coded response boxes
-  //set as null, null for conditional rendering of notification message
+  //initially set as null, null for conditional rendering of notification message
   const [notification, setNotification] = useState([null,null])
+  //***REFACTOR***
+  const [loginVisible, setLoginVisible] = useState(false)
+  const [blogformVisible, setBlogformVisible] = useState(false)
 
 
+//displays given message to the screen for given time (ms)
   const timeoutNotification = (message, time) =>{
     setNotification(message)
     setTimeout(()=>{
       setNotification([null,null])
     }, time)
   }
+//collects blogs from db, sorts by number of likes then updates blogs state to render to page
+  const updateBlogs = async () =>{
+    const updatedBlogs = await blogService.getAll()
+    updatedBlogs.sort((a,b) =>
+    b.likes - a.likes)
+     setBlogs(updatedBlogs)
+  }
+
 //check to see if user has a valid session open
   useEffect(() =>{
     const user = JSON.parse(window.localStorage.getItem("loggedUser"))
@@ -36,11 +50,9 @@ const App = () => {
       timeoutNotification(["Message",`Welcome back ${user.name}`],3000)
     }
   },[])
-  
+  //get all blogs and display to page
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    updateBlogs()
   }, [])
 
 
@@ -60,7 +72,6 @@ const App = () => {
 
     clearLoginBox()
     timeoutNotification(["Message",`${user.username} logged in successfully`], 2500)
-  
     }
     catch (exception){
       console.log(exception)
@@ -86,15 +97,11 @@ const App = () => {
   }
 
   const saveBlog = async () =>{
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
+    const newBlog = blogService.generateBlog(title, author, url)
     const result = await blogService.create(newBlog)
     return result
   }
-  
+
   const handleNewBlog = async event =>{
     event.preventDefault()
     try{
@@ -124,7 +131,12 @@ const App = () => {
 
       {user === null ?
       <>
-       <LoginForm 
+      <Togglable buttonLabel = {"login"}>
+
+       <LoginForm
+         loginVisible = {loginVisible}
+         setLoginVisible = {setLoginVisible}
+
          usernameState = {username}
          passwordState = {password}
        
@@ -133,22 +145,32 @@ const App = () => {
        
           onSubmit = {handleLogin}
        />
+      </Togglable>
+      <Togglable buttonLabel = {"new user"}>
+
+        <NewUserForm notification = {timeoutNotification}/>
+
+      </Togglable>
       </>
       :
       <>
       <div>
-        <BlogForm 
-          titleState = {title}
-          authorState = {author}
-          urlState = {url}
+        <Togglable buttonLabel = {"create blog"}>
+          <BlogForm
+            visible = {blogformVisible}
+            setVisible = {setBlogformVisible} 
 
-          setTitle = {setTitle}
-          setAuthor = {setAuthor}
-          setUrl = {setUrl}
+            titleState = {title}
+            authorState = {author}
+            urlState = {url}
 
-          onSubmit = {handleNewBlog} 
-          />
+            setTitle = {setTitle}
+            setAuthor = {setAuthor}
+            setUrl = {setUrl}
 
+            onSubmit = {handleNewBlog} 
+            />
+      </Togglable>
       </div>
       <div>
         <>
@@ -161,7 +183,10 @@ const App = () => {
         </>
         <h2>blogs</h2>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id}
+          blog={blog}
+          updateBlogs = {updateBlogs}
+          notification = {timeoutNotification} />
         )}
       </div>
       </>

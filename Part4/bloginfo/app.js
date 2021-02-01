@@ -20,6 +20,7 @@ const connect = async () =>{
 connect()
 
 app.use(cors())
+app.use(express.static("build"))
 app.use(express.json())
 app.use(middleware.getToken)
 app.use(middleware.requestLogger)
