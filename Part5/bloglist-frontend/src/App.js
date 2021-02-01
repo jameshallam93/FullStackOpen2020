@@ -8,6 +8,7 @@ import NewUserForm from "./components/NewUserForm"
 import loginService from "./services/login"
 import blogService from './services/blogs'
 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   //below three for creation of new blogs ***REFACTOR***
@@ -64,14 +65,14 @@ const App = () => {
   const handleLogin = async event =>{
     event.preventDefault()
     try{
-    const user = await loginService.login({username, password})
-      //set user state, token and local storage variable
-    setUser(user)
-    blogService.setToken(user.token)
-    window.localStorage.setItem("loggedUser", JSON.stringify(user))
+      const user = await loginService.login({username, password})
+        //set user state, token and local storage variable
+      setUser(user)
+      blogService.setToken(user.token)
+      window.localStorage.setItem("loggedUser", JSON.stringify(user))
 
-    clearLoginBox()
-    timeoutNotification(["Message",`${user.username} logged in successfully`], 2500)
+      clearLoginBox()
+      timeoutNotification(["Message",`${user.username} logged in successfully`], 2500)
     }
     catch (exception){
       console.log(exception)
@@ -121,17 +122,26 @@ const App = () => {
 
   
   const uniStyle = {
-    background:"lightGrey"
+    background:"AliceBlue"
+  }
+  const bannerStyle = {
+    border:"solid",
+    borderWidth:5,
+    borderColor:"blue",
+    color:"white",
+    font: "raleway",
+    background:"blue"
   }
 
 
   return (
     <div style = {uniStyle}>
+      <h1 style = {bannerStyle}>Hallams Blogs</h1>
       <Notification message = {notification} />
 
       {user === null ?
       <>
-      <Togglable buttonLabel = {"login"}>
+      <Togglable buttonLabel = {"Login"}>
 
        <LoginForm
          loginVisible = {loginVisible}
@@ -146,16 +156,18 @@ const App = () => {
           onSubmit = {handleLogin}
        />
       </Togglable>
-      <Togglable buttonLabel = {"new user"}>
+      <Togglable buttonLabel = {"New user"}>
 
         <NewUserForm notification = {timeoutNotification}/>
 
       </Togglable>
       </>
+      
       :
+      
       <>
       <div>
-        <Togglable buttonLabel = {"create blog"}>
+        <Togglable buttonLabel = {"Create blog"}>
           <BlogForm
             visible = {blogformVisible}
             setVisible = {setBlogformVisible} 
@@ -181,7 +193,7 @@ const App = () => {
               Logout
           </button>
         </>
-        <h2>blogs</h2>
+        <h2 style = {{textDecoration:"underline"}}>Blogs:</h2>
         {blogs.map(blog =>
           <Blog key={blog.id}
           blog={blog}

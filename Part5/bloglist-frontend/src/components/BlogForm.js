@@ -36,7 +36,7 @@ const BlogForm = (props) =>{
             </div>
                 <button type = "submit"
                 onClick = {props.onSubmit}>
-                create
+                Create
                 </button>
         </div>
         </form>

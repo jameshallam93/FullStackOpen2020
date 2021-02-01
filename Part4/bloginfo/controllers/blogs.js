@@ -58,7 +58,7 @@ blogRouter.delete("/:id", async (request, response) =>{
     if (blogToDelete.user.toString() !== decodedToken.id.toString()){
         console.log("Only a blogs author may delete it")
         response.status(401).json({error:"Only user who created note can delete it"})
-        return
+        return 
     }
     await Blog.findByIdAndDelete(id)
     response.status(204).end()

@@ -43,7 +43,7 @@ const Blog = ({ blog, updateBlogs, notification }) => {
       </button>
       <div style = {hiddenInfo}>
         <p>Likes: {blog.likes}</p>
-        <button onClick = {incrementLikes}>like</button>
+        <button onClick = {incrementLikes}>Like</button>
         <p>Url: {blog.url}</p>
         <button onClick = {handleDelete}>
           Delete blog?

@@ -11,8 +11,10 @@ const Togglable = (props) =>{
     const toggleVisibility = () =>{
         setVisible(!visible)
     }
+    //this is hacky - fix
+    //separate into welcomemessage component - no reason for it to be here
     const welcome = () =>{
-        if (props.buttonLabel === "login"){
+        if (props.buttonLabel === "Login"){
             return welcomeMessage
         }else {
             return null
