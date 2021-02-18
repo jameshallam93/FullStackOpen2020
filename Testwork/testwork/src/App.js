@@ -2,14 +2,12 @@ import React, { useState, useEffect }  from 'react'
 import Note from './components/Note.js';
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
-import LoginDisplay from "./components/LoginDisplay"
+import NoteForm from "./components/NoteForm"
+import Togglable from "./components/Togglable"
 import noteService from "./services/notes"
 import loginService from "./services/login"
 
 const App = ({notes}) => {
-
-
-  const [newNote, setNewNote] = useState("a new note..")  
 
   const [notez, setNotes] = useState([])
   
@@ -57,21 +55,7 @@ const App = ({notes}) => {
     
 
   
-  const addNote = (event) => {
-    event.preventDefault()
 
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important : Math.random() < 0.5,
-    }
-    noteService.create(noteObject)
-    .then(returnedNote =>{
-      setNotes(notez.concat(returnedNote))
-    })
-    setNewNote("")
-
-  }
   const resetUsernameAndPassword = () =>{
     setUsername("")
     setPassword("")
@@ -116,11 +100,7 @@ const App = ({notes}) => {
     setLoginVisible(false)
 
   }
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
 
-  }
   const handleDelete = id =>{
 
     const response = noteService.remove(id)
@@ -150,40 +130,35 @@ const App = ({notes}) => {
     setPassword(target.value)
   }
 
-
-  const noteForm = () =>(
-    <form onSubmit = {addNote}>
-      <input value = {newNote}
-      onChange = {handleNoteChange}>
-      </input>
-      <button type = "submit">save</button>
-    </form>
-  )
+  const createNote = (noteObject) =>{
+    noteService.create(noteObject)
+    .then(returnedNote =>{
+      setNotes(notez.concat(returnedNote))
+    })
+  }
 
 
-  const showWhenLoggedIn = {display: loggedIn ? "":"none"}
-  const hideWhenLoggedIn = {display: loggedIn ? "none": ""}
   return(
 
     <div>
       {user === null ?
-        <div style = {hideWhenLoggedIn}>
-        <LoginForm handleLogin = {handleLogin}
-        username = {username}
-        password = {password}
-        handleUsernameChange = {handleUsernameChange}
-        handlePasswordChange = {handlePasswordChange}
-        loginVisible = {loginVisible}
-        toggleLoginForm = {toggleLoginForm} />
-        </div>
+        <Togglable buttonLabel = {"log in"}>
+          <LoginForm handleLogin = {handleLogin}
+          username = {username}
+          password = {password}
+          handleUsernameChange = {handleUsernameChange}
+          handlePasswordChange = {handlePasswordChange}
+          loginVisible = {loginVisible}
+          toggleLoginForm = {toggleLoginForm} />
+        </Togglable>
         :
-        <div style = {showWhenLoggedIn}>
+        <div>
 
           <p>{user.name} logged in </p>
           <button onClick = {handleLogout}>
             Logout
           </button>
-          {noteForm()}
+          <NoteForm createNote = {createNote}/>
         </div>
       }
       <h1>Notes</h1>

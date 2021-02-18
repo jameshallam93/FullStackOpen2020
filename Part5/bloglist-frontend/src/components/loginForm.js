@@ -1,7 +1,22 @@
 import React from "react"
+import { useState } from "react"
 
-const LoginForm = (props) =>{
+const LoginForm = ({ handleLogin }) =>{
 
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+  const clearLoginBox = () =>{
+    setUsername("")
+    setPassword("")
+  }
+
+  const onSubmit = (event) =>{
+    event.preventDefault()
+    handleLogin(username, password)
+    clearLoginBox()
+
+  }
 
       return(
       <form>
@@ -10,21 +25,21 @@ const LoginForm = (props) =>{
           username
           <div>
             <input type = "text"
-            value = {props.usernameState}
+            value = {username}
             name = "username"
-            onChange = {({target})=>props.usernameFunction(target.value)}>
+            onChange = {({target})=>setUsername(target.value)}>
             </input>
           </div>
           password
           <div>
             <input type = "password"
-            value = {props.passwordState}
+            value = {password}
             name = "password"
-            onChange = {({target}) =>props.passwordFunction(target.value)}>
+            onChange = {({target}) =>setPassword(target.value)}>
             </input>
           </div>
           <button type = "submit"
-          onClick = {props.onSubmit}>
+          onClick = {onSubmit}>
               login
           </button>
       </div>

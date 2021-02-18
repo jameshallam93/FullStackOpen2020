@@ -11,20 +11,11 @@ import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //below three for creation of new blogs ***REFACTOR***
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
-  //for login form ***REFACTOR***
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+
   const [user, setUser] = useState(null)
   //two strings, one defining the type of notification ("Error"/"Message") and one with the message contents; allows for color coded response boxes
   //initially set as null, null for conditional rendering of notification message
   const [notification, setNotification] = useState([null,null])
-  //***REFACTOR***
-  const [loginVisible, setLoginVisible] = useState(false)
-  const [blogformVisible, setBlogformVisible] = useState(false)
 
 
 //displays given message to the screen for given time (ms)
@@ -57,13 +48,8 @@ const App = () => {
   }, [])
 
 
-  const clearLoginBox = () =>{
-    setUsername("")
-    setPassword("")
-  }
+  const handleLogin = async (username, password) =>{
 
-  const handleLogin = async event =>{
-    event.preventDefault()
     try{
       const user = await loginService.login({username, password})
         //set user state, token and local storage variable
@@ -71,17 +57,14 @@ const App = () => {
       blogService.setToken(user.token)
       window.localStorage.setItem("loggedUser", JSON.stringify(user))
 
-      clearLoginBox()
       timeoutNotification(["Message",`${user.username} logged in successfully`], 2500)
     }
     catch (exception){
       console.log(exception)
-      clearLoginBox()
       timeoutNotification(["Error","Error: Login failed - please try again"], 2500)
     }
   }
   
-
   const handleLogout = async event =>{
     event.preventDefault()
 
@@ -91,36 +74,29 @@ const App = () => {
     timeoutNotification(["Message","User has logged out"], 3000)
   }
 
-  const clearNewBlogBox = () =>{
-    setTitle("")
-    setAuthor("")
-    setUrl("")
-  }
 
-  const saveBlog = async () =>{
-    const newBlog = blogService.generateBlog(title, author, url)
-    const result = await blogService.create(newBlog)
+
+  const saveBlog = async (blog) =>{
+    const result = await blogService.create(blog)
     return result
   }
 
-  const handleNewBlog = async event =>{
+  const handleNewBlog = async (event, blog) =>{
     event.preventDefault()
     try{
-      const result = await saveBlog()
+      const result = await saveBlog(blog)
       timeoutNotification(["Message",`New blog, ${result.title}, has been saved`], 2500)
 
       const returnedBlogs = await blogService.getAll()
 
       setBlogs(returnedBlogs)
-      clearNewBlogBox()
 
     }catch(exception){
       timeoutNotification(["Error", exception], 3000)
-      clearNewBlogBox()
     }
   }
 
-  
+  //refactor
   const uniStyle = {
     background:"AliceBlue"
   }
@@ -144,16 +120,7 @@ const App = () => {
       <Togglable buttonLabel = {"Login"}>
 
        <LoginForm
-         loginVisible = {loginVisible}
-         setLoginVisible = {setLoginVisible}
-
-         usernameState = {username}
-         passwordState = {password}
-       
-         usernameFunction =  {setUsername}
-         passwordFunction = {setPassword}
-       
-          onSubmit = {handleLogin}
+          handleLogin = {handleLogin}
        />
       </Togglable>
       <Togglable buttonLabel = {"New user"}>
@@ -169,20 +136,8 @@ const App = () => {
       <div>
         <Togglable buttonLabel = {"Create blog"}>
           <BlogForm
-            visible = {blogformVisible}
-            setVisible = {setBlogformVisible} 
-
-            titleState = {title}
-            authorState = {author}
-            urlState = {url}
-
-            setTitle = {setTitle}
-            setAuthor = {setAuthor}
-            setUrl = {setUrl}
-
-            onSubmit = {handleNewBlog} 
-            />
-      </Togglable>
+            handleNewBlog = {handleNewBlog} />
+        </Togglable>
       </div>
       <div>
         <>
@@ -195,7 +150,8 @@ const App = () => {
         </>
         <h2 style = {{textDecoration:"underline"}}>Blogs:</h2>
         {blogs.map(blog =>
-          <Blog key={blog.id}
+          <Blog
+          key = {blog.id}
           blog={blog}
           updateBlogs = {updateBlogs}
           notification = {timeoutNotification} />

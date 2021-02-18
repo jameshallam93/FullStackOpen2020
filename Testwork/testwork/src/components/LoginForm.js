@@ -10,19 +10,11 @@ const LoginForm = ({
    toggleLoginForm
   }) => {
 
-
-    const hideWhenVisible = {display: loginVisible? "none": ""}
-    const showWhenVisible = {display: loginVisible? "": "none"}
         
     
   return (
     <div>
-        <div style = {hideWhenVisible}>
-            <button onClick = {toggleLoginForm}>
-                Login?
-            </button>
-        </div>
-        <div style = {showWhenVisible}>
+        <div>
             <h2>Login</h2>
 
             <form onSubmit={handleLogin}>

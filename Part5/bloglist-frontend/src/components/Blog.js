@@ -1,14 +1,14 @@
 import React from 'react'
 import { useState } from "react"
 import blogService from "../services/blogs"
+import helper from "../utils/blogHelper"
 
 const Blog = ({ blog, updateBlogs, notification }) => {
 
   const [showHidden, setShowHidden] = useState(false)
   
   const incrementLikes = async () =>{
-    blog.likes = blog.likes + 1
-    await blogService.update(blog)
+    await helper.updateLikes(blog)
     //below is an easy way to update hidden info without rerendering whole page - closes hidden info box and reopens with correct info
     setShowHidden(false)
     setShowHidden(true)
@@ -34,14 +34,16 @@ const Blog = ({ blog, updateBlogs, notification }) => {
   const hiddenInfo = {display: showHidden? "": "none"}
 
     return(
-    <div style = {blogStyle}>
+    <div style = {blogStyle}
+    className = "blog">
       <p>Title: {blog.title}</p>
       <p>Author: {blog.author}</p>
       <button
         onClick = {()=>setShowHidden(!showHidden)}>
         {showHidden? "Hide info" : "Show info"}
       </button>
-      <div style = {hiddenInfo}>
+      <div style = {hiddenInfo}
+      className = "hiddenInfo">
         <p>Likes: {blog.likes}</p>
         <button onClick = {incrementLikes}>Like</button>
         <p>Url: {blog.url}</p>

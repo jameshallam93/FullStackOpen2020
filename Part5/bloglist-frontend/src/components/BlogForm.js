@@ -1,43 +1,65 @@
 import React from "react"
+import { useState } from "react"
+const BlogForm = ({handleNewBlog}) =>{
 
-const BlogForm = (props) =>{
+    const [title, setTitle] = useState("")
+    const [author, setAuthor] = useState("")
+    const [url, setUrl] = useState("")
 
+    const clearNewBlogBox = () =>{
+        setTitle("")
+        setAuthor("")
+        setUrl("")
+      }
 
-
+    const onSubmit = (event) =>{
+        const newBlog = {
+            title:title,
+            author:author,
+            url:url
+        }
+        handleNewBlog(event, newBlog)
+        clearNewBlogBox()
+    }
         return(
         <div>
         <h1>Add a new Blog</h1>
-        <form>
+        <form onSubmit = {onSubmit}>
         <div>
             <div>
             title:
                 <input type = "text"
+                className = "title"
                 name = "title"
-                value = {props.titleState}
-                onChange = {({target}) => props.setTitle(target.value)}
+                value = {title}
+                onChange = {({target}) => setTitle(target.value)}
                 ></input>
             </div>
             <div>
             author:
                 <input type = "text"
+                className = "author"
                 name = "author"
-                value = {props.authorState}
-                onChange = {({target}) =>props.setAuthor(target.value)}
+                value = {author}
+                onChange = {({target}) =>setAuthor(target.value)}
                 />
 
             </div>
             <div>
             url:
                 <input type = "text"
+                className = "url"
                 name = "url"
-                value = {props.urlState}
-                onChange = {({target}) =>props.setUrl(target.value)}
+                value = {url}
+                onChange = {({target}) =>setUrl(target.value)}
                 />
-            </div>
+
                 <button type = "submit"
-                onClick = {props.onSubmit}>
+                className = "submit"
+                onClick = {onSubmit}>
                 Create
                 </button>
+            </div>
         </div>
         </form>
         </div>
