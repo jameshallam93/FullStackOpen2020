@@ -20,3 +20,22 @@ For the submission of exercises relating to [Helsinki Uni's Fullstack Open 2020]
 * Uses Json-server to collect notes from db.json file - Allows adding new name/number pairs and searching for existing names
 ## countries
 * uses two APIs to collect info on country (capital, flag etc.) and weather data(temp, weather icon) - conditional rendering only shows details for country once it is only possible result
+
+# Part3
+
+## phonebook backend
+* Server and build for frontend phonebook from previous part.
+
+# Part4
+
+## bloginfo backend
+
+# Part5
+## bloginfo frontend
+
+# Part6
+## anecdotes with redux
+## Unicafe with redux
+
+# Part7
+## Focus on React Router, as well as custom hooks.
